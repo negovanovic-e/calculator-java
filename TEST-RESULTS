@@ -1,0 +1,44 @@
+# TEST-RESULTS – Calculator Java
+
+## 1. Opseg i način testiranja
+
+Obavljeno je funkcionalno (black-box) testiranje kalkulatora bez izmjena njegova izvornog koda. Provjereni su valjani aritmetički izrazi, prioritet operatora, decimalni i negativni brojevi, neispravni unosi te rubni slučajevi. Rezultati su provjereni nad trenutačnim kodom projekta.
+
+Napomena: `Calculator.Run()` je javna ulazna metoda kalkulatora. Metoda `Calculate()` je privatna, pa se njezino ponašanje pri jediničnom testu provjerava preko javne metode koja je poziva.
+
+## 2. Testni slučajevi
+
+| ID | Ulaz | Očekivani rezultat | Dobiveni rezultat | Status / zapažanje |
+|---|---|---|---|---|
+| TC-01 | `4+5` | `9` | `9.0` | PROLAZ — osnovno zbrajanje radi. |
+| TC-02 | `10+5*4+3` | `33` | `33.0` | PROLAZ — množenje ima prednost pred zbrajanjem. |
+| TC-03 | `2+3*4` | `14` | `14.0` | PROLAZ — prioritet operatora radi. |
+| TC-04 | `8/2*2` | `8` | `8.0` | PROLAZ — dijeljenje i množenje istog prioriteta obrađuju se slijeva nadesno. |
+| TC-05 | `8-3-2` | `3` | `3.0` | PROLAZ — oduzimanje se obrađuje slijeva nadesno. |
+| TC-06 | `1.5+2.5` | `4` | `4.0` | PROLAZ — decimalni brojevi rade u ovom primjeru. |
+| TC-07 | `2 + 3` | `5` | `5.0` | PROLAZ — razmaci oko brojeva i operatora prihvaćaju se. |
+| TC-08 | `-5` | `-5` | `-5.0` | PROLAZ — negativan broj na početku izraza radi. |
+| TC-09 | `abc` | Jasna poruka o neispravnom izrazu | `ERROR` | PROLAZ uz napomenu — neispravan unos je odbijen, ali poruka je vrlo općenita. |
+| TC-10 | `1+` | Poruka o neispravnom/nepotpunom izrazu | `1.0` | NE PROLAZI — završni operator se ignorira, a prikazuje se rezultat kao da je unos valjan. |
+| TC-11 | `10+5*4+3+` | Poruka o neispravnom/nepotpunom izrazu | `33.0` | NE PROLAZI — nepotpuni izraz prihvaća se i vraća rezultat prethodnog dijela izraza. |
+| TC-12 | `5*-2` | `-10` | `ERROR` | NE PROLAZI ako su dopušteni negativni operandi unutar izraza — parser ne obrađuje ovaj uobičajeni aritmetički zapis. |
+| TC-13 | `5+-2` | `3` | `ERROR` | NE PROLAZI ako su dopušteni negativni operandi unutar izraza — negativan drugi operand nije podržan. |
+| TC-14 | Prazan unos | Poruka o neispravnom unosu, bez rušenja | `StringIndexOutOfBoundsException` | NE PROLAZI — prazan izraz izaziva iznimku. |
+| TC-15 | `1/0` | Jasna poruka o dijeljenju nulom ili ponašanje definirano zahtjevima | `Infinity` | POTENCIJALNI NEDOSTATAK — dijeljenje nulom ne daje korisniku objašnjenje. Potrebno je definirati očekivano ponašanje. |
+| TC-16 | `0/0` | Jasna poruka o nevaljanom rezultatu ili ponašanje definirano zahtjevima | `NaN` | POTENCIJALNI NEDOSTATAK — prikazuje se `NaN` umjesto korisniku razumljive poruke. |
+| TC-17 | `/` nakon izračuna `2+2` | Poruka o neispravnom izrazu | `4.0` | NE PROLAZI — izraz bez brojeva može vratiti prethodni rezultat jer se vrijednost `finalResult` ne resetira prije izračuna. |
+| TC-18 | Više redaka ulaza poslano programu `Start` u jednom ulaznom toku | Program treba obraditi svaki izraz i završiti na `exit` | U testu s višerednim ulazom program obradi prvi izraz, a zatim prijavi `NoSuchElementException` | NE PROLAZI u ovom načinu unosa — novi `Scanner` stvara se unutar svake iteracije petlje i može potrošiti međuspremnik ulaza. |
+
+## 3. Zapažanja i pronađeni nedostaci
+
+1. **Nepotpuni izrazi prihvaćaju se kao valjani.** Primjeri `1+` i `10+5*4+3+` daju brojčani rezultat umjesto poruke o neispravnom izrazu.
+2. **Prazan unos ruši obradu.** Program pristupa prvom znaku izraza bez provjere je li unos prazan.
+3. **Negativni operandi nakon operatora nisu pravilno podržani.** Primjeri `5*-2` i `5+-2` vraćaju `ERROR`.
+4. **Rezultat dijeljenja nulom nije obrađen na korisniku razumljiv način.** Dobivaju se vrijednosti `Infinity` i `NaN`.
+5. **Moguće je vraćanje prethodnog rezultata za nevaljan ulaz.** Izraz koji sadrži samo operator `/` može vratiti prethodno izračunatu vrijednost.
+6. **Ulazna petlja u `Start.java` stvara novi `Scanner` u svakoj iteraciji.** To uzrokuje problem pri obradi višerednog ulaza iz jednog ulaznog toka i treba ga zamijeniti jednim `Scanner` objektom izvan petlje.
+7. **Poruka `ERROR` nije dovoljno opisna.** Korisniku ne govori je li problem nevaljan znak, nepotpun izraz ili neispravan broj.
+
+## 4. Zaključak
+
+Osnovne računske operacije i prioritet operatora rade na provjerenim valjanim primjerima. Međutim, testiranjem su otkriveni nedostaci u provjeri nepotpunog i praznog izraza, obradi negativnih operanada, dijeljenju nulom, resetiranju prethodnog rezultata i obradi ulaznog toka u konzolnom sučelju. Preporučuje se poboljšati validaciju ulaza i definirati jasne poruke za neispravne izraze.
