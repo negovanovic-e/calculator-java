@@ -1,12 +1,9 @@
-# TEST-RESULTS – Calculator Java
+TEST-RESULTS – Calculator Java
 
-## 1. Opseg i način testiranja
-
+1. Opseg i način testiranja
 Obavljeno je funkcionalno (black-box) testiranje kalkulatora bez izmjena njegova izvornog koda. Provjereni su valjani aritmetički izrazi, prioritet operatora, decimalni i negativni brojevi, neispravni unosi te rubni slučajevi. Rezultati su provjereni nad trenutačnim kodom projekta.
 
-Napomena: `Calculator.Run()` je javna ulazna metoda kalkulatora. Metoda `Calculate()` je privatna, pa se njezino ponašanje pri jediničnom testu provjerava preko javne metode koja je poziva.
-
-## 2. Testni slučajevi
+2. Testni slučajevi
 
 | ID | Ulaz | Očekivani rezultat | Dobiveni rezultat | Status / zapažanje |
 |---|---|---|---|---|
@@ -29,16 +26,16 @@ Napomena: `Calculator.Run()` je javna ulazna metoda kalkulatora. Metoda `Calcula
 | TC-17 | `/` nakon izračuna `2+2` | Poruka o neispravnom izrazu | `4.0` | NE PROLAZI — izraz bez brojeva može vratiti prethodni rezultat jer se vrijednost `finalResult` ne resetira prije izračuna. |
 | TC-18 | Više redaka ulaza poslano programu `Start` u jednom ulaznom toku | Program treba obraditi svaki izraz i završiti na `exit` | U testu s višerednim ulazom program obradi prvi izraz, a zatim prijavi `NoSuchElementException` | NE PROLAZI u ovom načinu unosa — novi `Scanner` stvara se unutar svake iteracije petlje i može potrošiti međuspremnik ulaza. |
 
-## 3. Zapažanja i pronađeni nedostaci
 
-1. **Nepotpuni izrazi prihvaćaju se kao valjani.** Primjeri `1+` i `10+5*4+3+` daju brojčani rezultat umjesto poruke o neispravnom izrazu.
-2. **Prazan unos ruši obradu.** Program pristupa prvom znaku izraza bez provjere je li unos prazan.
-3. **Negativni operandi nakon operatora nisu pravilno podržani.** Primjeri `5*-2` i `5+-2` vraćaju `ERROR`.
-4. **Rezultat dijeljenja nulom nije obrađen na korisniku razumljiv način.** Dobivaju se vrijednosti `Infinity` i `NaN`.
-5. **Moguće je vraćanje prethodnog rezultata za nevaljan ulaz.** Izraz koji sadrži samo operator `/` može vratiti prethodno izračunatu vrijednost.
-6. **Ulazna petlja u `Start.java` stvara novi `Scanner` u svakoj iteraciji.** To uzrokuje problem pri obradi višerednog ulaza iz jednog ulaznog toka i treba ga zamijeniti jednim `Scanner` objektom izvan petlje.
-7. **Poruka `ERROR` nije dovoljno opisna.** Korisniku ne govori je li problem nevaljan znak, nepotpun izraz ili neispravan broj.
+3. Zapažanja i pronađeni nedostaci
 
-## 4. Zaključak
+1. Nepotpuni izrazi prihvaćaju se kao valjani. Primjeri `1+` i `10+5*4+3+` daju brojčani rezultat umjesto poruke o neispravnom izrazu.
+2. Prazan unos ruši obradu.Program pristupa prvom znaku izraza bez provjere je li unos prazan.
+3. Negativni operandi nakon operatora nisu pravilno podržani. Primjeri `5*-2` i `5+-2` vraćaju `ERROR`.
+4. Rezultat dijeljenja nulom nije obrađen na korisniku razumljiv način.** Dobivaju se vrijednosti `Infinity` i `NaN`.
+5. Moguće je vraćanje prethodnog rezultata za nevaljan ulaz. Izraz koji sadrži samo operator `/` može vratiti prethodno izračunatu vrijednost.
+6. Ulazna petlja u `Start.java` stvara novi `Scanner` u svakoj iteraciji. To uzrokuje problem pri obradi višerednog ulaza iz jednog ulaznog toka i treba ga zamijeniti jednim `Scanner` objektom izvan petlje.
+7. Poruka `ERROR` nije dovoljno opisna. Korisniku ne govori je li problem nevaljan znak, nepotpun izraz ili neispravan broj.
 
+4. Zaključak
 Osnovne računske operacije i prioritet operatora rade na provjerenim valjanim primjerima. Međutim, testiranjem su otkriveni nedostaci u provjeri nepotpunog i praznog izraza, obradi negativnih operanada, dijeljenju nulom, resetiranju prethodnog rezultata i obradi ulaznog toka u konzolnom sučelju. Preporučuje se poboljšati validaciju ulaza i definirati jasne poruke za neispravne izraze.
